@@ -137,6 +137,7 @@ Fileupload.prototype.handle = function (ctx, next) {
  
                 // Store MIME type in object
                 storedObject.type = mime.lookup(file.name);
+                if(storedObject.id) delete storedObject.id;
  
                 self.store.insert(storedObject, function(err, result) {
                     if (err) return processDone(err);
