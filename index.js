@@ -81,13 +81,13 @@ Fileupload.prototype.handle = function (ctx, next) {
             subdir,
             creator;
  
- 
+        console.log("^^^^#1");
         // Will send the response if all files have been processed
         var processDone = function(err) {
             if (err) return ctx.done(err);
             remainingFile--;
             if (remainingFile === 0) {
-                debug("Response sent: ", resultFiles);
+                console.log("Response sent: ", resultFiles);
                 return ctx.done(null, resultFiles);
             }
         }
@@ -137,12 +137,21 @@ Fileupload.prototype.handle = function (ctx, next) {
  
                 // Store MIME type in object
                 storedObject.type = mime.lookup(file.name);
-                if(storedObject.id) delete storedObject.id;
- 
+		
+		if(storedObject.id) delete storedObject.id;
+
+		
+
                 self.store.insert(storedObject, function(err, result) {
                     if (err) return processDone(err);
+                    
                     debug('stored after event.upload.run %j', err || result || 'none');
-                    resultFiles.push(result);
+                    console.log("#1");
+                    console.log(result);
+                    var clone = extend(result);
+                    resultFiles.push(clone);
+                    console.log("#2");
+                    console.log(result);
                     processDone();
                 });
  
@@ -246,4 +255,23 @@ Fileupload.prototype.del = function(ctx, next) {
 /**
  * Module export
  */
+
+function extend(from, to)
+{
+    if (from == null || typeof from != "object") return from;
+    if (from.constructor != Object && from.constructor != Array) return from;
+    if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
+        from.constructor == String || from.constructor == Number || from.constructor == Boolean)
+        return new from.constructor(from);
+
+    to = to || new from.constructor();
+
+    for (var name in from)
+    {
+        to[name] = typeof to[name] == "undefined" ? extend(from[name], null) : to[name];
+    }
+
+    return to;
+}
+
 module.exports = Fileupload;
