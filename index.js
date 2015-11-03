@@ -51,7 +51,8 @@ function Fileupload(options) {
 util.inherits(Fileupload, Resource);
  
 Fileupload.label = "File upload";
-Fileupload.events = ["get", "upload", "delete"];
+Fileupload.events = ["get", "upload", "delete", "storetodisk"];
+
 Fileupload.prototype.clientGeneration = true;
 Fileupload.basicDashboard = {
     settings: [
@@ -138,7 +139,7 @@ Fileupload.prototype.handle = function (ctx, next) {
                 // Store MIME type in object
                 storedObject.type = mime.lookup(file.name);
 		
-		if(storedObject.id) delete storedObject.id;
+		        if(storedObject.id) delete storedObject.id;
 
 		
 
@@ -150,11 +151,35 @@ Fileupload.prototype.handle = function (ctx, next) {
                     console.log(result);
                     var clone = extend(result);
                     resultFiles.push(clone);
+
                     console.log("#2");
-                    console.log(result);
-                    processDone();
+                    
+                    console.log("####asdasdsa");
+                    if (self.events.storetodisk) {
+                        console.log("^^1");
+                        var storetodiskObj = {
+                            storedObject: storedObject,
+                            fullPath: path.join(uploadDir, file.name),
+                        }
+                        console.log("^^2");
+
+                        self.events.storetodisk.run(ctx, storetodiskObj, function(err) {
+                            console.log("^^4");
+                            processDone();
+                        });
+                       
+                    } else {
+                         processDone();
+                    } 
+
+
+    
                 });
  
+                
+
+
+
             });
         }
  
@@ -165,6 +190,7 @@ Fileupload.prototype.handle = function (ctx, next) {
                     file.originalFilename = file.name;
                     file.name = md5(Date.now()) + '.' + file.name.split('.').pop();
                 }
+
                 if (self.events.upload) {
                     self.events.upload.run(ctx, {url: ctx.url, filesize: file.size, filename: ctx.url}, function(err) {
                         if (err) return processDone(err);
