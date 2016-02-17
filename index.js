@@ -72,14 +72,17 @@ function Fileupload(name, options) {
 		};
 		this.properties = this.config.properties;
 		
-		this.config.directory = dir;
-		this.config.fullDirectory = path.join(__dirname, publicDir, dir);
+
 		
 		// write the config file since it was apparently incomplete before
 		fs.writeFile(path.join(options.configPath, 'config.json'), JSON.stringify(this.config), function(err) {
 			if (err) throw err;
 		});
 	}
+
+
+		this.config.directory = "user_uploads";
+		this.config.fullDirectory = path.join(__dirname, publicDir, dir);
 	
 	// If the directory doesn't exist, we'll create it
 	try {
