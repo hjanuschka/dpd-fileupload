@@ -19,7 +19,7 @@ function Fileupload(name, options) {
 	
 	// check to see if config has everything we need...
 	if (!this.config.properties || !this.config.directory || !this.config.fullDirectory) {
-		var dir = "_" + name;
+		var dir = "user_uploads";
 		this.config.properties = {
 			filesize: {
 				name: "filesize",
