@@ -20,7 +20,7 @@ function Fileupload(name, options) {
 
 	var dir = "user_uploads";
 	// check to see if config has everything we need...
-	if (!this.config.properties || !this.config.directory || !this.config.fullDirectory) {
+	if (!this.config.properties || !this.config.directory) {
 
 		this.config.properties = {
 			filesize: {
@@ -74,8 +74,6 @@ function Fileupload(name, options) {
 		};
 		this.properties = this.config.properties;
 		
-		this.config.directory = "user_uploads";
-                this.config.fullDirectory = path.join(__dirname, publicDir, dir);
 		
 		// write the config file since it was apparently incomplete before
 		fs.writeFile(path.join(options.configPath, 'config.json'), JSON.stringify(this.config), function(err) {
